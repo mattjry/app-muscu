@@ -5,113 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mon Suivi Muscu</title>
     <style>
-        /* PALETTE PREMIUM BASÉE SUR L'IMAGE */
+        /* PALETTE SEAMLESS LIGHT (Inspirée de l'image) */
         :root {
-            --bg-dark: #050505;         /* Couleur 5 : Noir profond */
-            --surface: #28292B;         /* Couleur 1 : Gris ardoise */
-            --surface-hover: #38393C;   
-            --text-main: #F2F4F7;       /* Couleur 4 : Blanc cassé */
-            --text-muted: #8b8b93;
-            --accent: #DE5B17;          /* Couleur 2 : Orange vif */
-            --accent-dark: #63260F;     /* Couleur 3 : Marron/Rouille */
-            --danger: #ef4444;
-            --radius: 16px;
+            --bg-main: #FFFFFF;         /* Fond blanc pur */
+            --text-primary: #1C1C1E;    /* Gris anthracite (presque noir) */
+            --text-secondary: #8E8E93;  /* Gris moyen pour les infos secondaires */
+            --accent: #0A1128;          /* Bleu nuit profond de la palette */
+            --input-bg: #F2F2F7;        /* Gris très clair pour les zones de saisie */
+            --divider: #E5E5EA;         /* Lignes de séparation ultra-fines */
+            --danger: #FF3B30;
         }
         
+        * { box-sizing: border-box; }
+
         body { 
-            font-family: 'Arial', sans-serif; 
-            background-color: var(--bg-dark); 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main); 
             margin: 0; 
-            padding: 20px 15px; 
-            color: var(--text-main); 
+            padding: 20px; 
+            color: var(--text-primary); 
             padding-bottom: 100px; 
             -webkit-font-smoothing: antialiased;
         }
 
-        h1, h2, h3, h4 { margin-top: 0; }
+        h1, h2, h3, h4 { margin-top: 0; font-weight: 600; }
         
-        /* TYPOGRAPHIE TITRES */
-        .epic-title {
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-size: 28px;
-            margin-bottom: 25px;
-            color: var(--text-main);
+        /* TYPOGRAPHIE ÉPURÉE */
+        .page-title {
+            font-size: 32px;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            margin-bottom: 30px;
+            color: var(--text-primary);
         }
-        .epic-subtitle {
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 16px;
-            color: var(--text-main);
+        .section-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: var(--text-primary);
         }
 
         /* NAVIGATION SEAMLESS */
         .bottom-nav { 
-            position: fixed; bottom: 15px; left: 15px; right: 15px; 
-            background: rgba(40, 41, 43, 0.85); 
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            display: flex; border-radius: 20px;
-            padding: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
-            border: 1px solid rgba(255,255,255,0.03);
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            display: flex; 
+            padding-bottom: env(safe-area-inset-bottom);
+            border-top: 1px solid var(--divider);
             z-index: 100;
         }
         .nav-item { 
-            flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: bold; 
-            color: var(--text-muted); cursor: pointer; border-radius: 15px; transition: all 0.3s ease;
+            flex: 1; text-align: center; padding: 15px 0; font-size: 12px; font-weight: 600; 
+            color: var(--text-secondary); cursor: pointer; transition: color 0.2s;
         }
-        .nav-item.active { background: var(--surface-hover); color: var(--accent); }
+        .nav-item.active { color: var(--accent); }
         
-        .view { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .view { display: none; animation: fadeIn 0.2s ease-in-out; }
         .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        /* UI COMPONENTS */
-        .card { 
-            background: var(--surface); padding: 20px; border-radius: var(--radius); 
-            margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.02); 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        /* CONTENEURS INVISIBLES (Fini les boîtes) */
+        .section-container { 
+            margin-bottom: 30px; 
         }
         
-        /* INPUTS SEAMLESS */
+        /* INPUTS FLAT */
         input, select, textarea { 
-            width: 100%; padding: 14px; margin-top: 5px; margin-bottom: 15px; 
-            border-radius: 12px; border: 1px solid transparent; 
-            background: rgba(0,0,0,0.3); color: var(--text-main); 
-            font-size: 16px; font-family: inherit; transition: border 0.2s;
+            width: 100%; padding: 16px; margin-top: 5px; margin-bottom: 15px; 
+            border-radius: 12px; border: none; 
+            background: var(--input-bg); color: var(--text-primary); 
+            font-size: 16px; font-family: inherit;
             outline: none; -webkit-appearance: none;
         }
-        input:focus, select:focus, textarea:focus { border-color: var(--accent); background: rgba(0,0,0,0.5); }
+        input:focus, select:focus, textarea:focus { 
+            background: #E8E8ED; 
+        }
         
-        /* BUTTONS (Avec effet Glow sur le principal) */
+        /* BUTTONS ÉLÉGANTS */
         button { 
-            background-color: var(--accent); color: white; border: none; font-weight: bold; 
-            cursor: pointer; width: 100%; padding: 14px; border-radius: 12px; font-size: 15px;
-            transition: transform 0.1s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(222, 91, 23, 0.25);
+            background-color: var(--accent); color: white; border: none; font-weight: 600; 
+            cursor: pointer; width: 100%; padding: 16px; border-radius: 12px; font-size: 16px;
+            transition: transform 0.1s;
         }
         button:active { transform: scale(0.98); }
-        .btn-secondary { background-color: var(--surface-hover); color: var(--text-main); box-shadow: none; border: 1px solid rgba(255,255,255,0.05); }
-        .btn-danger { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); box-shadow: none; border: 1px solid rgba(239, 68, 68, 0.2); }
-        .btn-small { padding: 8px 12px; font-size: 13px; width: auto; margin: 0; border-radius: 8px; }
+        .btn-secondary { background-color: var(--input-bg); color: var(--text-primary); }
+        .btn-text { background: transparent; color: var(--accent); padding: 0; width: auto; font-size: 14px; font-weight: 500; }
+        .btn-danger { background-color: transparent; color: var(--danger); border: 1px solid var(--danger); }
+        .btn-small { padding: 8px 16px; font-size: 14px; width: auto; margin: 0; border-radius: 8px; }
         
-        /* LISTES ÉPURÉES */
+        /* LISTES SANS BORDURES GLOBALES */
         ul { padding-left: 0; list-style: none; margin: 0; }
         li { 
-            background: rgba(0,0,0,0.15); padding: 15px; border-radius: 12px; 
-            margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; 
-            border: 1px solid rgba(255,255,255,0.02); cursor: pointer;
+            padding: 16px 0; 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 1px solid var(--divider); cursor: pointer;
         }
+        li:last-child { border-bottom: none; }
         
-        /* ACCORDÉON CATÉGORIES */
+        /* ACCORDÉON CATÉGORIES (Intégré au fond) */
         .category-header { 
-            display: flex; align-items: center; font-size: 14px; font-weight: bold; 
-            color: var(--accent); margin-top: 25px; margin-bottom: 10px; cursor: pointer; 
-            text-transform: uppercase; letter-spacing: 1px;
+            display: flex; align-items: center; font-size: 15px; font-weight: 600; 
+            color: var(--text-primary); margin-top: 20px; padding-bottom: 10px; cursor: pointer; 
+            border-bottom: 1px solid var(--text-primary);
         }
-        .category-header::after { content: ''; flex: 1; height: 1px; background: rgba(222, 91, 23, 0.2); margin-left: 15px; }
-        .chevron { margin-right: 10px; font-size: 10px; transition: transform 0.2s; display: inline-block;}
+        .chevron { margin-right: 10px; font-size: 10px; transition: transform 0.2s; color: var(--text-secondary);}
         .chevron.closed { transform: rotate(-90deg); }
         .category-content { display: block; overflow: hidden; }
         .category-content.closed { display: none; }
@@ -120,37 +118,38 @@
         .flex-row { display: flex; gap: 10px; align-items: center; }
 
         /* SÉANCE ACTIVE */
-        .set-row { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; }
-        .set-row input { margin: 0; text-align: center; background: #000; border: 1px solid var(--surface-hover); }
-        .set-info { flex: 1; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px;}
-        .last-perf { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; padding-left: 5px; }
-        .badge { background: var(--accent-dark); color: var(--text-main); padding: 4px 8px; border-radius: 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid rgba(222, 91, 23, 0.3);}
+        .set-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+        .set-row input { margin: 0; text-align: center; background: var(--input-bg); }
+        .set-info { flex: 1; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 8px;}
+        .last-perf { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; }
+        .badge { background: var(--input-bg); color: var(--text-secondary); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;}
 
-        /* MODAL PLEIN ÉCRAN */
+        /* MODAL PLEIN ÉCRAN SEAMLESS */
         .modal-overlay { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: var(--bg-dark); z-index: 200; overflow-y: auto; padding-bottom: 30px;
+            background: var(--bg-main); z-index: 200; overflow-y: auto; padding-bottom: 30px;
         }
         .modal-header { 
-            background: rgba(5, 5, 5, 0.9); backdrop-filter: blur(10px); padding: 15px 20px; 
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 20px; 
             display: flex; justify-content: space-between; align-items: center; 
-            position: sticky; top: 0; z-index: 201; border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky; top: 0; z-index: 201; border-bottom: 1px solid var(--divider);
         }
         .modal-body { padding: 20px; }
         
         /* GRAPHIQUE */
-        .svg-container { width: 100%; height: 180px; margin-top: 15px; position: relative;}
+        .svg-container { width: 100%; height: 200px; margin-top: 10px; position: relative;}
     </style>
 </head>
 <body>
 
     <!-- VUE 1 : EXERCICES -->
     <div id="view-exercices" class="view">
-        <h2 class="epic-title">Exercices</h2>
-        <div class="card">
+        <h2 class="page-title">Exercices</h2>
+        
+        <div class="section-container">
             <input type="text" id="exerciseName" placeholder="Nouvel exercice (ex: Squat)">
             <div class="flex-row">
-                <select id="exerciseCategory">
+                <select id="exerciseCategory" style="margin-bottom: 0;">
                     <option value="Pectoraux">Pectoraux</option>
                     <option value="Dos">Dos</option>
                     <option value="Jambes">Jambes</option>
@@ -159,25 +158,26 @@
                     <option value="Abdos">Abdos</option>
                     <option value="Autre">Autre</option>
                 </select>
-                <button class="btn-small" style="width: auto; padding: 0 20px;" onclick="addExercise()">Créer</button>
+                <button class="btn-small" style="padding: 16px 24px;" onclick="addExercise()">Créer</button>
             </div>
         </div>
+        
         <div id="exerciseListArea" style="margin-bottom: 20px;"></div>
     </div>
 
     <!-- PAGE DÉTAILS DE L'EXERCICE (Modal) -->
     <div id="exerciseDetailModal" class="modal-overlay">
         <div class="modal-header">
-            <button class="btn-small" style="background: transparent; color: var(--text-muted); padding: 0; box-shadow: none;" onclick="closeExerciseDetail()">◀ Retour</button>
-            <h3 class="epic-subtitle" style="margin: 0;">Détails</h3>
-            <button class="btn-small btn-secondary" style="border:none;" onclick="saveExerciseDetail()">Sauver</button>
+            <button class="btn-text" onclick="closeExerciseDetail()">◀ Retour</button>
+            <h3 class="section-title" style="margin: 0;">Détails</h3>
+            <button class="btn-text" onclick="saveExerciseDetail()">Enregistrer</button>
         </div>
         <div class="modal-body">
-            <div class="card">
-                <label style="font-size: 12px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;">Nom</label>
+            <div class="section-container">
+                <label style="font-size: 13px; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 5px;">NOM</label>
                 <input type="text" id="detailExName">
                 
-                <label style="font-size: 12px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;">Catégorie</label>
+                <label style="font-size: 13px; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 5px;">CATÉGORIE</label>
                 <select id="detailExCategory">
                     <option value="Pectoraux">Pectoraux</option>
                     <option value="Dos">Dos</option>
@@ -188,46 +188,47 @@
                     <option value="Autre">Autre</option>
                 </select>
 
-                <label style="font-size: 12px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; display: block; margin-top: 10px;">Notes / Réglages</label>
+                <label style="font-size: 13px; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 5px; margin-top: 10px;">NOTES / RÉGLAGES</label>
                 <textarea id="detailExNotes" rows="3" placeholder="Ex: Siège sur 3..."></textarea>
             </div>
 
-            <div class="card">
-                <h3 class="epic-subtitle" style="margin-bottom: 5px;">Progression</h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-top: 0;">Charge maximale (kg)</p>
+            <div class="section-container" style="margin-top: 30px;">
+                <h3 class="section-title" style="margin-bottom: 5px;">Progression</h3>
+                <p style="font-size: 13px; color: var(--text-secondary); margin-top: 0;">Charge maximale (kg)</p>
                 <div class="svg-container" id="svgContainer">
                     <svg id="chartSvg" width="100%" height="100%"></svg>
                 </div>
             </div>
 
-            <button class="btn-danger" style="margin-top: 20px;" onclick="deleteCurrentExercise()">Supprimer l'exercice</button>
+            <button class="btn-danger" style="margin-top: 40px;" onclick="deleteCurrentExercise()">Supprimer l'exercice</button>
         </div>
     </div>
 
     <!-- VUE 2 : MES SÉANCES -->
     <div id="view-routines" class="view active">
-        <h2 class="epic-title">Séances</h2>
+        <h2 class="page-title">Séances</h2>
+        
         <div id="routinesListArea">
             <button onclick="showRoutineBuilder()">+ Nouvelle Séance</button>
-            <div id="routinesList" style="margin-top: 20px;"></div>
+            <div id="routinesList" style="margin-top: 30px;"></div>
         </div>
 
         <!-- Constructeur de Séance -->
         <div id="routineBuilder" style="display: none;">
-            <div class="card">
-                <h3 id="builderTitle" class="epic-subtitle" style="margin-bottom: 20px;">Créer</h3>
-                <input type="text" id="routineName" placeholder="Nom (ex: Push Day)">
+            <div class="section-container">
+                <h3 id="builderTitle" class="section-title">Créer</h3>
+                <input type="text" id="routineName" placeholder="Nom de la séance (ex: Push)">
                 
-                <label style="font-size: 12px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; display: block; margin-top: 15px;">Ajouter Exercice</label>
+                <label style="font-size: 13px; font-weight: 500; color: var(--text-secondary); display: block; margin-top: 20px; margin-bottom: 5px;">AJOUTER UN EXERCICE</label>
                 <div class="flex-row">
                     <select id="routineExerciseSelect" style="margin-bottom: 0;"></select>
-                    <button class="btn-secondary btn-small" onclick="addExerciseToDraft()">Ajouter</button>
+                    <button class="btn-secondary btn-small" style="padding: 16px 20px;" onclick="addExerciseToDraft()">Ajouter</button>
                 </div>
             </div>
             
-            <ul id="draftExerciseList"></ul>
+            <ul id="draftExerciseList" style="margin-bottom: 30px;"></ul>
 
-            <div class="flex-row" style="margin-top: 20px;">
+            <div class="flex-row">
                 <button class="btn-secondary" onclick="cancelRoutineBuilder()">Annuler</button>
                 <button onclick="saveRoutine()">Enregistrer</button>
             </div>
@@ -236,7 +237,7 @@
 
     <!-- VUE 3 : ENTRAÎNEMENT ACTIF -->
     <div id="view-workout" class="view">
-        <h2 id="activeWorkoutTitle" class="epic-title" style="color: var(--accent);">En cours</h2>
+        <h2 id="activeWorkoutTitle" class="page-title" style="color: var(--accent);">En cours</h2>
         <div id="activeWorkoutContent"></div>
     </div>
 
@@ -244,7 +245,7 @@
     <div class="bottom-nav">
         <div class="nav-item" onclick="switchTab('exercices')">Exercices</div>
         <div class="nav-item active" onclick="switchTab('routines')">Séances</div>
-        <div class="nav-item" onclick="switchTab('workout')" id="nav-workout" style="display:none; color: var(--accent);">Actif 🔴</div>
+        <div class="nav-item" onclick="switchTab('workout')" id="nav-workout" style="display:none; color: var(--accent);">En cours 🔴</div>
     </div>
 
     <script>
@@ -300,7 +301,7 @@
             for (const [cat, list] of Object.entries(grouped)) {
                 html = `<div class="category-header" onclick="toggleCategory('${catIndex}')"><span class="chevron" id="chev-${catIndex}">▼</span> ${cat}</div><ul class="category-content" id="cat-content-${catIndex}">`;
                 list.forEach(ex => {
-                    html += `<li onclick="openExerciseDetail('${ex.id}')"><span>${ex.name}</span><span style="color:var(--accent);">›</span></li>`;
+                    html += `<li onclick="openExerciseDetail('${ex.id}')"><span>${ex.name}</span><span style="color:var(--text-secondary); font-size:18px;">›</span></li>`;
                 });
                 html += `</ul>`; area.innerHTML += html; catIndex++;
             }
@@ -352,26 +353,27 @@
             });
 
             if (dataPoints.length === 0) {
-                svg.innerHTML = `<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="12" fill="var(--text-muted)">Aucune donnée</text>`; return;
+                svg.innerHTML = `<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="13" fill="var(--text-secondary)">Aucune donnée</text>`; return;
             }
 
             const width = document.getElementById('svgContainer').clientWidth;
-            const height = 180; const padX = 20; const padY = 20;
+            const height = 200; const padX = 20; const padY = 20;
             const maxW = Math.max(...dataPoints.map(d => d.weight)); const minW = Math.min(...dataPoints.map(d => d.weight));
             const rangeY = (maxW - minW) || 10; 
 
             let pointsSvg = ""; let circlesSvg = ""; let labelsSvg = "";
             
-            svg.innerHTML += `<line x1="${padX}" y1="${height - padY}" x2="${width - padX}" y2="${height - padY}" stroke="rgba(255,255,255,0.05)" stroke-width="1" />`;
+            // Grille légère
+            svg.innerHTML += `<line x1="${padX}" y1="${height - padY}" x2="${width - padX}" y2="${height - padY}" stroke="var(--divider)" stroke-width="1" />`;
 
             dataPoints.forEach((pt, i) => {
                 let cx = padX + (i * ((width - 2*padX) / Math.max(1, dataPoints.length - 1)));
                 let cy = height - padY - ((pt.weight - minW) / rangeY) * (height - 2*padY);
                 
                 pointsSvg += `${cx},${cy} `;
-                circlesSvg += `<circle cx="${cx}" cy="${cy}" r="4" fill="var(--accent)" />`;
-                labelsSvg += `<text x="${cx}" y="${height - 2}" font-size="10" text-anchor="middle" fill="var(--text-muted)">${pt.date}</text>`;
-                labelsSvg += `<text x="${cx}" y="${cy - 12}" font-size="11" font-weight="bold" text-anchor="middle" fill="var(--text-main)">${pt.weight}</text>`;
+                circlesSvg += `<circle cx="${cx}" cy="${cy}" r="5" fill="var(--bg-main)" stroke="var(--accent)" stroke-width="2" />`;
+                labelsSvg += `<text x="${cx}" y="${height - 2}" font-size="11" text-anchor="middle" fill="var(--text-secondary)">${pt.date}</text>`;
+                labelsSvg += `<text x="${cx}" y="${cy - 15}" font-size="12" font-weight="600" text-anchor="middle" fill="var(--text-primary)">${pt.weight}</text>`;
             });
 
             svg.innerHTML += `<polyline points="${pointsSvg.trim()}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>${circlesSvg}${labelsSvg}`;
@@ -381,11 +383,11 @@
             document.getElementById('routinesListArea').style.display = 'none';
             document.getElementById('routineBuilder').style.display = 'block';
             if (id) {
-                editingRoutineId = id; document.getElementById('builderTitle').innerText = "Modifier";
+                editingRoutineId = id; document.getElementById('builderTitle').innerText = "Modifier la séance";
                 const routine = routines.find(r => r.id === id); draftRoutine = JSON.parse(JSON.stringify(routine)); 
                 document.getElementById('routineName').value = draftRoutine.name;
             } else {
-                editingRoutineId = null; document.getElementById('builderTitle').innerText = "Créer";
+                editingRoutineId = null; document.getElementById('builderTitle').innerText = "Créer une séance";
                 draftRoutine = { name: "", items: [] }; document.getElementById('routineName').value = "";
             }
             renderDraftList();
@@ -416,25 +418,25 @@
                 let setsHtml = "";
                 item.sets.forEach((target, setIndex) => {
                     setsHtml += `
-                        <div class="flex-row" style="margin-top:8px;">
+                        <div class="flex-row" style="margin-top:10px;">
                             <span class="badge">S${setIndex + 1}</span>
-                            <input type="text" style="padding:10px; margin:0;" value="${target}" onchange="updateDraftSetTarget(${exIndex}, ${setIndex}, this.value)" placeholder="Reps">
-                            <button class="btn-danger btn-small" onclick="removeSetFromDraft(${exIndex}, ${setIndex})">✕</button>
+                            <input type="text" style="margin:0;" value="${target}" onchange="updateDraftSetTarget(${exIndex}, ${setIndex}, this.value)" placeholder="Reps cibles">
+                            <button class="btn-text" style="color:var(--text-secondary); width:auto;" onclick="removeSetFromDraft(${exIndex}, ${setIndex})">✕</button>
                         </div>
                     `;
                 });
                 list.innerHTML += `
-                    <li style="display:block; background:transparent; margin-top:15px; border:none; padding:0;">
-                        <div class="flex-between">
-                            <strong style="color:var(--text-main);">${exIndex + 1}. ${item.exName}</strong>
-                            <div>
-                                <button class="btn-secondary btn-small" onclick="moveExercise(${exIndex}, -1)">▲</button>
-                                <button class="btn-secondary btn-small" onclick="moveExercise(${exIndex}, 1)">▼</button>
-                                <button class="btn-danger btn-small" onclick="removeExerciseFromDraft(${exIndex})">✕</button>
+                    <li style="display:block; padding: 20px 0;">
+                        <div class="flex-between" style="margin-bottom: 15px;">
+                            <strong style="font-size:16px;">${exIndex + 1}. ${item.exName}</strong>
+                            <div class="flex-row" style="gap:5px;">
+                                <button class="btn-text" style="color:var(--text-secondary);" onclick="moveExercise(${exIndex}, -1)">▲</button>
+                                <button class="btn-text" style="color:var(--text-secondary);" onclick="moveExercise(${exIndex}, 1)">▼</button>
+                                <button class="btn-text" style="color:var(--danger);" onclick="removeExerciseFromDraft(${exIndex})">✕</button>
                             </div>
                         </div>
-                        <div style="margin-top:15px;">${setsHtml}</div>
-                        <button class="btn-small btn-secondary" style="margin-top:15px; width:100%; border:1px dashed rgba(255,255,255,0.1);" onclick="addSetToDraft(${exIndex})">+ Ajouter Série</button>
+                        <div>${setsHtml}</div>
+                        <button class="btn-secondary" style="margin-top:15px;" onclick="addSetToDraft(${exIndex})">+ Ajouter une série</button>
                     </li>
                 `;
             });
@@ -458,15 +460,17 @@
             const list = document.getElementById('routinesList'); list.innerHTML = "";
             routines.forEach(r => {
                 list.innerHTML += `
-                    <div class="card">
-                        <div class="flex-between" style="margin-bottom:5px;">
-                            <h3 class="epic-subtitle" style="margin:0;">${r.name}</h3>
-                            <button class="btn-secondary btn-small" onclick="showRoutineBuilder('${r.id}')" style="background:transparent; border:none; color:var(--text-muted);">Éditer</button>
+                    <div style="padding: 20px 0; border-bottom: 1px solid var(--divider);">
+                        <div class="flex-between" style="margin-bottom:10px;">
+                            <h3 class="section-title" style="margin:0;">${r.name}</h3>
+                            <button class="btn-text" onclick="showRoutineBuilder('${r.id}')">Modifier</button>
                         </div>
-                        <div style="font-size:12px; color:var(--text-muted); margin-bottom:20px; line-height:1.5;">
-                            ${r.items.map(i => i.exName).join(' <span style="color:var(--accent);">/</span> ')}
+                        <div style="font-size:14px; color:var(--text-secondary); margin-bottom:20px; line-height:1.6;">
+                            ${r.items.map(i => i.exName).join(' <span style="color:var(--divider);">|</span> ')}
                         </div>
-                        <button onclick="startWorkout('${r.id}')">Démarrer</button>
+                        <div class="flex-row">
+                            <button onclick="startWorkout('${r.id}')">Commencer la séance</button>
+                        </div>
                     </div>
                 `;
             });
@@ -491,14 +495,14 @@
             container.innerHTML = "";
 
             currentWorkout.items.forEach((item, exIndex) => {
-                let html = `<div class="card"><h3 class="epic-subtitle">${exIndex + 1}. ${item.exName}</h3>`;
+                let html = `<div style="padding: 25px 0; border-bottom: 1px solid var(--divider);"><h3 class="section-title">${exIndex + 1}. ${item.exName}</h3>`;
                 
                 let lastItemData = null;
                 if (lastSession && lastSession.items[exIndex] && lastSession.items[exIndex].exId === item.exId) { lastItemData = lastSession.items[exIndex]; }
 
                 const baseEx = exercises.find(e => e.id === item.exId);
                 if(baseEx && baseEx.notes) {
-                    html += `<div style="font-size:12px; color:var(--text-main); margin-bottom:15px; padding:10px; background:var(--accent-dark); border-left: 3px solid var(--accent); border-radius:4px;">${baseEx.notes}</div>`;
+                    html += `<div style="font-size:13px; color:var(--text-primary); margin-bottom:20px; padding:12px; background:var(--input-bg); border-radius:8px;">${baseEx.notes}</div>`;
                 }
 
                 item.sets.forEach((targetReps, setIndex) => {
@@ -508,9 +512,9 @@
                     }
 
                     html += `
-                        <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+                        <div style="margin-top: 15px;">
                             <div class="flex-between" style="margin-bottom: 8px;">
-                                <div class="set-info"><span class="badge">S${setIndex + 1}</span> <span style="font-size:12px; font-weight:normal; color:var(--text-muted);">Cible: ${targetReps}</span></div>
+                                <div class="set-info"><span class="badge">S${setIndex + 1}</span> <span style="font-size:13px; color:var(--text-secondary);">Cible: ${targetReps}</span></div>
                                 <div class="last-perf">${lastPerfText}</div>
                             </div>
                             <div class="set-row">
@@ -524,7 +528,7 @@
                 html += `</div>`; container.innerHTML += html;
             });
 
-            container.innerHTML += `<button style="margin-top: 10px; margin-bottom: 40px;" onclick="finishWorkout()">Terminer la séance</button>`;
+            container.innerHTML += `<button style="margin-top: 30px; margin-bottom: 40px;" onclick="finishWorkout()">Terminer la séance</button>`;
         }
 
         function finishWorkout() {
