@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mon Suivi Muscu</title>
     <style>
-        /* PALETTE SEAMLESS LIGHT (Inspirée de l'image) */
+        /* PALETTE SEAMLESS LIGHT */
         :root {
-            --bg-main: #FFFFFF;         /* Fond blanc pur */
-            --text-primary: #1C1C1E;    /* Gris anthracite (presque noir) */
-            --text-secondary: #8E8E93;  /* Gris moyen pour les infos secondaires */
-            --accent: #0A1128;          /* Bleu nuit profond de la palette */
-            --input-bg: #F2F2F7;        /* Gris très clair pour les zones de saisie */
-            --divider: #E5E5EA;         /* Lignes de séparation ultra-fines */
+            --bg-main: #FFFFFF;         
+            --text-primary: #1C1C1E;    
+            --text-secondary: #8E8E93;  
+            --accent: #0A1128;          
+            --input-bg: #F2F2F7;        
+            --divider: #E5E5EA;         
             --danger: #FF3B30;
         }
         
@@ -30,19 +30,12 @@
 
         h1, h2, h3, h4 { margin-top: 0; font-weight: 600; }
         
-        /* TYPOGRAPHIE ÉPURÉE */
         .page-title {
-            font-size: 32px;
-            font-weight: 500;
-            letter-spacing: -0.5px;
-            margin-bottom: 30px;
-            color: var(--text-primary);
+            font-size: 32px; font-weight: 500; letter-spacing: -0.5px;
+            margin-bottom: 30px; color: var(--text-primary);
         }
         .section-title {
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 15px;
-            color: var(--text-primary);
+            font-size: 18px; font-weight: 500; margin-bottom: 15px; color: var(--text-primary);
         }
 
         /* NAVIGATION SEAMLESS */
@@ -50,10 +43,8 @@
             position: fixed; bottom: 0; left: 0; right: 0; 
             background: rgba(255, 255, 255, 0.9); 
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            display: flex; 
-            padding-bottom: env(safe-area-inset-bottom);
-            border-top: 1px solid var(--divider);
-            z-index: 100;
+            display: flex; padding-bottom: env(safe-area-inset-bottom);
+            border-top: 1px solid var(--divider); z-index: 100;
         }
         .nav-item { 
             flex: 1; text-align: center; padding: 15px 0; font-size: 12px; font-weight: 600; 
@@ -65,24 +56,18 @@
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        /* CONTENEURS INVISIBLES (Fini les boîtes) */
-        .section-container { 
-            margin-bottom: 30px; 
-        }
+        .section-container { margin-bottom: 30px; }
         
         /* INPUTS FLAT */
         input, select, textarea { 
             width: 100%; padding: 16px; margin-top: 5px; margin-bottom: 15px; 
-            border-radius: 12px; border: none; 
-            background: var(--input-bg); color: var(--text-primary); 
-            font-size: 16px; font-family: inherit;
+            border-radius: 12px; border: none; background: var(--input-bg); 
+            color: var(--text-primary); font-size: 16px; font-family: inherit;
             outline: none; -webkit-appearance: none;
         }
-        input:focus, select:focus, textarea:focus { 
-            background: #E8E8ED; 
-        }
+        input:focus, select:focus, textarea:focus { background: #E8E8ED; }
         
-        /* BUTTONS ÉLÉGANTS */
+        /* BUTTONS */
         button { 
             background-color: var(--accent); color: white; border: none; font-weight: 600; 
             cursor: pointer; width: 100%; padding: 16px; border-radius: 12px; font-size: 16px;
@@ -94,16 +79,12 @@
         .btn-danger { background-color: transparent; color: var(--danger); border: 1px solid var(--danger); }
         .btn-small { padding: 8px 16px; font-size: 14px; width: auto; margin: 0; border-radius: 8px; }
         
-        /* LISTES SANS BORDURES GLOBALES */
+        /* LISTES */
         ul { padding-left: 0; list-style: none; margin: 0; }
-        li { 
-            padding: 16px 0; 
-            display: flex; justify-content: space-between; align-items: center; 
-            border-bottom: 1px solid var(--divider); cursor: pointer;
-        }
+        li { padding: 16px 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--divider); cursor: pointer; }
         li:last-child { border-bottom: none; }
         
-        /* ACCORDÉON CATÉGORIES (Intégré au fond) */
+        /* ACCORDÉON */
         .category-header { 
             display: flex; align-items: center; font-size: 15px; font-weight: 600; 
             color: var(--text-primary); margin-top: 20px; padding-bottom: 10px; cursor: pointer; 
@@ -124,7 +105,7 @@
         .last-perf { font-size: 13px; color: var(--text-secondary); margin-bottom: 10px; }
         .badge { background: var(--input-bg); color: var(--text-secondary); padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;}
 
-        /* MODAL PLEIN ÉCRAN SEAMLESS */
+        /* MODAL */
         .modal-overlay { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: var(--bg-main); z-index: 200; overflow-y: auto; padding-bottom: 30px;
@@ -136,8 +117,9 @@
         }
         .modal-body { padding: 20px; }
         
-        /* GRAPHIQUE */
+        /* GRAPHIQUES */
         .svg-container { width: 100%; height: 200px; margin-top: 10px; position: relative;}
+        .radar-container { width: 100%; height: 280px; margin-top: 20px; position: relative;}
     </style>
 </head>
 <body>
@@ -145,23 +127,13 @@
     <!-- VUE 1 : EXERCICES -->
     <div id="view-exercices" class="view">
         <h2 class="page-title">Exercices</h2>
-        
         <div class="section-container">
             <input type="text" id="exerciseName" placeholder="Nouvel exercice (ex: Squat)">
             <div class="flex-row">
-                <select id="exerciseCategory" style="margin-bottom: 0;">
-                    <option value="Pectoraux">Pectoraux</option>
-                    <option value="Dos">Dos</option>
-                    <option value="Jambes">Jambes</option>
-                    <option value="Épaules">Épaules</option>
-                    <option value="Bras">Bras</option>
-                    <option value="Abdos">Abdos</option>
-                    <option value="Autre">Autre</option>
-                </select>
+                <select id="exerciseCategory" style="margin-bottom: 0;"></select>
                 <button class="btn-small" style="padding: 16px 24px;" onclick="addExercise()">Créer</button>
             </div>
         </div>
-        
         <div id="exerciseListArea" style="margin-bottom: 20px;"></div>
     </div>
 
@@ -178,20 +150,11 @@
                 <input type="text" id="detailExName">
                 
                 <label style="font-size: 13px; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 5px;">CATÉGORIE</label>
-                <select id="detailExCategory">
-                    <option value="Pectoraux">Pectoraux</option>
-                    <option value="Dos">Dos</option>
-                    <option value="Jambes">Jambes</option>
-                    <option value="Épaules">Épaules</option>
-                    <option value="Bras">Bras</option>
-                    <option value="Abdos">Abdos</option>
-                    <option value="Autre">Autre</option>
-                </select>
+                <select id="detailExCategory"></select>
 
                 <label style="font-size: 13px; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 5px; margin-top: 10px;">NOTES / RÉGLAGES</label>
                 <textarea id="detailExNotes" rows="3" placeholder="Ex: Siège sur 3..."></textarea>
             </div>
-
             <div class="section-container" style="margin-top: 30px;">
                 <h3 class="section-title" style="margin-bottom: 5px;">Progression</h3>
                 <p style="font-size: 13px; color: var(--text-secondary); margin-top: 0;">Charge maximale (kg)</p>
@@ -199,7 +162,6 @@
                     <svg id="chartSvg" width="100%" height="100%"></svg>
                 </div>
             </div>
-
             <button class="btn-danger" style="margin-top: 40px;" onclick="deleteCurrentExercise()">Supprimer l'exercice</button>
         </div>
     </div>
@@ -207,27 +169,22 @@
     <!-- VUE 2 : MES SÉANCES -->
     <div id="view-routines" class="view active">
         <h2 class="page-title">Séances</h2>
-        
         <div id="routinesListArea">
             <button onclick="showRoutineBuilder()">+ Nouvelle Séance</button>
             <div id="routinesList" style="margin-top: 30px;"></div>
         </div>
 
-        <!-- Constructeur de Séance -->
         <div id="routineBuilder" style="display: none;">
             <div class="section-container">
                 <h3 id="builderTitle" class="section-title">Créer</h3>
                 <input type="text" id="routineName" placeholder="Nom de la séance (ex: Push)">
-                
                 <label style="font-size: 13px; font-weight: 500; color: var(--text-secondary); display: block; margin-top: 20px; margin-bottom: 5px;">AJOUTER UN EXERCICE</label>
                 <div class="flex-row">
                     <select id="routineExerciseSelect" style="margin-bottom: 0;"></select>
                     <button class="btn-secondary btn-small" style="padding: 16px 20px;" onclick="addExerciseToDraft()">Ajouter</button>
                 </div>
             </div>
-            
             <ul id="draftExerciseList" style="margin-bottom: 30px;"></ul>
-
             <div class="flex-row">
                 <button class="btn-secondary" onclick="cancelRoutineBuilder()">Annuler</button>
                 <button onclick="saveRoutine()">Enregistrer</button>
@@ -241,24 +198,71 @@
         <div id="activeWorkoutContent"></div>
     </div>
 
+    <!-- VUE 4 : PROFIL (Nouveau) -->
+    <div id="view-profil" class="view">
+        <h2 class="page-title">Profil</h2>
+        
+        <!-- Graphique Radar (Araignée) -->
+        <div class="section-container">
+            <h3 class="section-title" style="margin-bottom: 5px;">Volume d'entraînement</h3>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-top: 0;">Répartition des séries dans tes séances</p>
+            <div class="radar-container" id="radarContainer">
+                <svg id="radarSvg" width="100%" height="100%"></svg>
+            </div>
+        </div>
+
+        <!-- Mensurations Personnalisées -->
+        <div class="section-container" style="margin-top: 40px;">
+            <div class="flex-between" style="margin-bottom: 15px;">
+                <h3 class="section-title" style="margin:0;">Mensurations</h3>
+                <button class="btn-text" onclick="addMeasurement()">+ Ajouter</button>
+            </div>
+            <ul id="measurementsList"></ul>
+        </div>
+
+        <!-- Gestion des Catégories Musculaires -->
+        <div class="section-container" style="margin-top: 40px;">
+            <h3 class="section-title">Catégories Musculaires</h3>
+            <div class="flex-row" style="margin-bottom: 15px;">
+                <input type="text" id="newCategoryName" placeholder="Ex: Mollets" style="margin: 0;">
+                <button class="btn-secondary btn-small" style="padding: 16px 20px;" onclick="addCategory()">Créer</button>
+            </div>
+            <ul id="categoriesList"></ul>
+        </div>
+    </div>
+
     <!-- BARRE DE NAVIGATION EN BAS -->
     <div class="bottom-nav">
         <div class="nav-item" onclick="switchTab('exercices')">Exercices</div>
         <div class="nav-item active" onclick="switchTab('routines')">Séances</div>
+        <div class="nav-item" onclick="switchTab('profil')">Profil</div>
         <div class="nav-item" onclick="switchTab('workout')" id="nav-workout" style="display:none; color: var(--accent);">En cours 🔴</div>
     </div>
 
     <script>
+        // --- DONNÉES LOCALES ---
         let exercises = JSON.parse(localStorage.getItem('exercises')) || [];
         let routines = JSON.parse(localStorage.getItem('routines')) || [];
         let history = JSON.parse(localStorage.getItem('history')) || [];
+        
+        // Nouvelles variables pour le Profil
+        const defaultCategories = ["Pectoraux", "Dos", "Jambes", "Épaules", "Bras", "Abdos"];
+        let categories = JSON.parse(localStorage.getItem('categories')) || defaultCategories;
+        let measurements = JSON.parse(localStorage.getItem('measurements')) || [];
         
         let draftRoutine = { name: "", items: [] }; 
         let editingRoutineId = null; 
         let currentWorkout = null; 
         let currentDetailExId = null;
 
-        function init() { renderExercises(); renderRoutines(); populateExerciseSelects(); }
+        function init() { 
+            renderCategorySelects();
+            renderProfileCategories();
+            renderMeasurements();
+            renderExercises(); 
+            renderRoutines(); 
+            populateExerciseSelects(); 
+        }
 
         function switchTab(tabName) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -267,9 +271,206 @@
             
             if(tabName === 'exercices') document.querySelectorAll('.nav-item')[0].classList.add('active');
             if(tabName === 'routines') document.querySelectorAll('.nav-item')[1].classList.add('active');
+            if(tabName === 'profil') {
+                document.querySelectorAll('.nav-item')[2].classList.add('active');
+                setTimeout(() => drawRadarChart(), 50); // Délai pour que le SVG ait une dimension visible
+            }
             if(tabName === 'workout') document.getElementById('nav-workout').classList.add('active');
         }
 
+        // --- GESTION DES CATÉGORIES (PROFIL) ---
+        function renderCategorySelects() {
+            const selects = [document.getElementById('exerciseCategory'), document.getElementById('detailExCategory')];
+            selects.forEach(sel => {
+                if(sel) {
+                    sel.innerHTML = '';
+                    categories.forEach(c => sel.innerHTML += `<option value="${c}">${c}</option>`);
+                    sel.innerHTML += `<option value="Autre">Autre</option>`;
+                }
+            });
+        }
+
+        function addCategory() {
+            const val = document.getElementById('newCategoryName').value.trim();
+            if (val && !categories.includes(val)) {
+                categories.push(val);
+                saveData('categories', categories);
+                document.getElementById('newCategoryName').value = '';
+                renderProfileCategories();
+                renderCategorySelects();
+                renderExercises();
+            }
+        }
+
+        function deleteCategory(catName) {
+            if(confirm(`Supprimer la catégorie "${catName}" ? Les exercices associés passeront dans "Autre".`)) {
+                categories = categories.filter(c => c !== catName);
+                saveData('categories', categories);
+                renderProfileCategories();
+                renderCategorySelects();
+                renderExercises();
+            }
+        }
+
+        function renderProfileCategories() {
+            const list = document.getElementById('categoriesList');
+            list.innerHTML = "";
+            categories.forEach(cat => {
+                list.innerHTML += `
+                    <li>
+                        <span style="font-weight: 500;">${cat}</span>
+                        <button class="btn-text" style="color:var(--danger);" onclick="deleteCategory('${cat}')">✕</button>
+                    </li>
+                `;
+            });
+        }
+
+        // --- GESTION DES MENSURATIONS (PROFIL) ---
+        function addMeasurement() {
+            const name = prompt("Nom de la mensuration (ex: Poids, Tour de bras, Épaules) :");
+            if(name && name.trim() !== "") {
+                measurements.push({ id: Date.now().toString(), name: name.trim(), history: [] });
+                saveData('measurements', measurements);
+                renderMeasurements();
+            }
+        }
+
+        function updateMeasurement(id) {
+            const input = document.getElementById(`meas_val_${id}`);
+            const val = input.value;
+            if(val) {
+                const meas = measurements.find(m => m.id === id);
+                const today = new Date();
+                const dateStr = `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth()+1).toString().padStart(2, '0')}`;
+                meas.history.push({ date: dateStr, value: parseFloat(val) });
+                saveData('measurements', measurements);
+                input.value = "";
+                renderMeasurements();
+            }
+        }
+
+        function deleteMeasurement(id) {
+            if(confirm("Supprimer cette mensuration ?")) {
+                measurements = measurements.filter(m => m.id !== id);
+                saveData('measurements', measurements);
+                renderMeasurements();
+            }
+        }
+
+        function renderMeasurements() {
+            const list = document.getElementById('measurementsList');
+            list.innerHTML = "";
+            measurements.forEach(meas => {
+                const lastEntry = meas.history.length > 0 ? meas.history[meas.history.length - 1] : null;
+                const lastText = lastEntry ? `Dernier: ${lastEntry.value} (${lastEntry.date})` : "Aucune donnée";
+                
+                list.innerHTML += `
+                    <li style="display:block; padding: 20px 0;">
+                        <div class="flex-between" style="margin-bottom: 10px;">
+                            <strong style="font-size:16px;">${meas.name}</strong>
+                            <button class="btn-text" style="color:var(--danger);" onclick="deleteMeasurement('${meas.id}')">✕</button>
+                        </div>
+                        <div class="flex-between">
+                            <span style="font-size: 13px; color: var(--text-secondary);">${lastText}</span>
+                            <div class="flex-row" style="gap: 5px;">
+                                <input type="number" id="meas_val_${meas.id}" placeholder="Valeur" inputmode="decimal" style="width: 90px; padding: 10px; margin:0; border-radius: 8px;">
+                                <button class="btn-small" style="padding: 10px 15px;" onclick="updateMeasurement('${meas.id}')">OK</button>
+                            </div>
+                        </div>
+                    </li>
+                `;
+            });
+        }
+
+        // --- GRAPHIQUE RADAR (ARAIGNÉE) ---
+        function drawRadarChart() {
+            const svg = document.getElementById('radarSvg');
+            if(!svg) return;
+            
+            // Calculer le volume des séries par catégorie depuis les routines créées
+            let volumeData = {};
+            categories.forEach(c => volumeData[c] = 0);
+            volumeData["Autre"] = 0;
+
+            routines.forEach(r => {
+                r.items.forEach(item => {
+                    const ex = exercises.find(e => e.id === item.exId);
+                    const cat = (ex && ex.category && categories.includes(ex.category)) ? ex.category : "Autre";
+                    volumeData[cat] += item.sets.length;
+                });
+            });
+
+            // Préparer les données (on exclut "Autre" s'il est à 0)
+            let labels = [];
+            let values = [];
+            categories.forEach(c => { labels.push(c); values.push(volumeData[c]); });
+            if(volumeData["Autre"] > 0) { labels.push("Autre"); values.push(volumeData["Autre"]); }
+
+            if(values.every(v => v === 0)) {
+                svg.innerHTML = `<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="13" fill="var(--text-secondary)">Crée des séances pour voir le graphique</text>`;
+                return;
+            }
+
+            const width = document.getElementById('radarContainer').clientWidth;
+            const height = document.getElementById('radarContainer').clientHeight;
+            const cx = width / 2;
+            const cy = height / 2;
+            const rMax = Math.min(cx, cy) - 35; // Espace pour les labels
+            const maxVal = Math.max(...values, 5); // Base minimum pour l'échelle
+
+            let html = '';
+
+            // 1. Dessiner les toiles de fond (Niveaux)
+            for(let level = 1; level <= 4; level++) {
+                let pts = '';
+                const r = rMax * (level/4);
+                labels.forEach((_, i) => {
+                    const angle = (Math.PI * 2 * i / labels.length) - Math.PI/2;
+                    pts += `${cx + r * Math.cos(angle)},${cy + r * Math.sin(angle)} `;
+                });
+                html += `<polygon points="${pts}" fill="none" stroke="var(--divider)" stroke-width="1"/>`;
+            }
+
+            // 2. Dessiner les axes et le texte
+            let dataPoints = '';
+            labels.forEach((label, i) => {
+                const angle = (Math.PI * 2 * i / labels.length) - Math.PI/2;
+                
+                // Axes
+                const px = cx + rMax * Math.cos(angle);
+                const py = cy + rMax * Math.sin(angle);
+                html += `<line x1="${cx}" y1="${cy}" x2="${px}" y2="${py}" stroke="var(--divider)" stroke-width="1"/>`;
+
+                // Texte
+                const lx = cx + (rMax + 20) * Math.cos(angle);
+                const ly = cy + (rMax + 20) * Math.sin(angle);
+                
+                // Ajustement de l'ancre du texte selon la position
+                let anchor = "middle";
+                if(Math.cos(angle) > 0.1) anchor = "start";
+                else if(Math.cos(angle) < -0.1) anchor = "end";
+                
+                html += `<text x="${lx}" y="${ly}" font-size="11" font-weight="600" text-anchor="${anchor}" dominant-baseline="middle" fill="var(--text-primary)">${label} (${values[i]})</text>`;
+
+                // Calculer les points de données
+                const rData = rMax * (values[i] / maxVal);
+                dataPoints += `${cx + rData * Math.cos(angle)},${cy + rData * Math.sin(angle)} `;
+            });
+
+            // 3. Dessiner la zone de données (Polygone bleu nuit)
+            html += `<polygon points="${dataPoints}" fill="rgba(10, 17, 40, 0.15)" stroke="var(--accent)" stroke-width="2"/>`;
+            
+            // 4. Points sur les sommets
+            labels.forEach((_, i) => {
+                const angle = (Math.PI * 2 * i / labels.length) - Math.PI/2;
+                const rData = rMax * (values[i] / maxVal);
+                html += `<circle cx="${cx + rData * Math.cos(angle)}" cy="${cy + rData * Math.sin(angle)}" r="4" fill="var(--bg-main)" stroke="var(--accent)" stroke-width="2"/>`;
+            });
+
+            svg.innerHTML = html;
+        }
+
+        // --- EXERCICES, SÉANCES ET HISTORIQUE (Identique) ---
         function addExercise() {
             const name = document.getElementById('exerciseName').value.trim();
             const category = document.getElementById('exerciseCategory').value;
@@ -362,8 +563,6 @@
             const rangeY = (maxW - minW) || 10; 
 
             let pointsSvg = ""; let circlesSvg = ""; let labelsSvg = "";
-            
-            // Grille légère
             svg.innerHTML += `<line x1="${padX}" y1="${height - padY}" x2="${width - padX}" y2="${height - padY}" stroke="var(--divider)" stroke-width="1" />`;
 
             dataPoints.forEach((pt, i) => {
@@ -449,11 +648,11 @@
                 const index = routines.findIndex(r => r.id === editingRoutineId);
                 routines[index] = { id: editingRoutineId, name: name, items: draftRoutine.items };
             } else { routines.push({ id: Date.now().toString(), name: name, items: draftRoutine.items }); }
-            saveData('routines', routines); cancelRoutineBuilder(); renderRoutines();
+            saveData('routines', routines); cancelRoutineBuilder(); renderRoutines(); drawRadarChart(); // MàJ Graphique
         }
 
         function deleteRoutine(id) {
-            if(confirm("Supprimer cette séance ?")) { routines = routines.filter(r => r.id !== id); saveData('routines', routines); renderRoutines(); }
+            if(confirm("Supprimer cette séance ?")) { routines = routines.filter(r => r.id !== id); saveData('routines', routines); renderRoutines(); drawRadarChart(); }
         }
 
         function renderRoutines() {
