@@ -5,221 +5,350 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon Suivi Muscu</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f2f2f7; margin: 0; padding: 20px; color: #1c1c1e; }
-        h1 { font-size: 24px; margin-bottom: 20px; text-align: center; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f2f2f7; margin: 0; padding: 15px; color: #1c1c1e; padding-bottom: 80px; }
+        h1, h2, h3, h4 { margin-top: 0; }
         
-        /* Navigation par onglets */
-        .tabs { display: flex; margin-bottom: 20px; background: #e5e5ea; border-radius: 8px; padding: 4px; }
-        .tab { flex: 1; text-align: center; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #8e8e93; font-size: 14px; }
-        .tab.active { background: white; color: #000; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        /* Navigation (Onglets en bas) */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; border-top: 1px solid #e5e5ea; padding-bottom: env(safe-area-inset-bottom); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 100;}
+        .nav-item { flex: 1; text-align: center; padding: 15px 0; font-size: 14px; font-weight: bold; color: #8e8e93; cursor: pointer; }
+        .nav-item.active { color: #007aff; }
+        
         .view { display: none; }
         .view.active { display: block; }
         
-        /* Cartes et Formulaires */
+        /* Composants UI */
         .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        input, select, button { width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 12px; border-radius: 8px; border: 1px solid #c7c7cc; font-size: 16px; box-sizing: border-box; }
-        button { background-color: #007aff; color: white; border: none; font-weight: bold; }
+        input, select, button { width: 100%; padding: 12px; margin-top: 5px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #c7c7cc; font-size: 16px; box-sizing: border-box; }
+        button { background-color: #007aff; color: white; border: none; font-weight: bold; cursor: pointer;}
         .btn-secondary { background-color: #34c759; }
+        .btn-danger { background-color: #ff3b30; }
+        .btn-small { padding: 8px; font-size: 14px; width: auto; margin: 0; }
         
         /* Listes */
-        ul { padding-left: 0; list-style: none; margin-top: 0; }
-        li { background: #ffffff; padding: 12px 15px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e5e5ea; font-size: 15px;}
-        .delete-btn { background-color: #ff3b30; color: white; border: none; padding: 6px 12px; border-radius: 6px; width: auto; margin: 0; font-size: 14px; }
+        ul { padding-left: 0; list-style: none; margin: 0; }
+        li { background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e5e5ea; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .flex-row { display: flex; gap: 10px; align-items: center; }
         
-        /* Mise en page spécifique */
-        .flex-row { display: flex; gap: 10px; }
-        .history-info { background: #e5f1ff; padding: 12px; border-radius: 8px; font-size: 14px; color: #004080; margin-bottom: 15px; line-height: 1.4;}
+        /* Séance Active */
+        .set-row { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; }
+        .set-row input { margin: 0; text-align: center; }
+        .set-info { flex: 1; font-size: 14px; font-weight: bold;}
+        .last-perf { font-size: 12px; color: #8e8e93; margin-bottom: 10px; font-style: italic; }
+        
+        /* Badge */
+        .badge { background: #007aff; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-right: 5px;}
     </style>
 </head>
 <body>
-    <h1>🏋️ Mon Suivi</h1>
-    
-    <!-- Menu de navigation -->
-    <div class="tabs">
-        <div class="tab active" onclick="switchTab('seance')">Ma Séance</div>
-        <div class="tab" onclick="switchTab('exercices')">Gérer les exercices</div>
-    </div>
 
-    <!-- VUE 1 : LA SÉANCE -->
-    <div id="view-seance" class="view active">
-        <div class="card">
-            <h3>1. Choisir l'exercice</h3>
-            <select id="exerciseSelect" onchange="updateHistoryView()">
-                <option value="">-- Sélectionnez --</option>
-            </select>
-        </div>
-
-        <div class="card" id="workoutSection" style="display: none;">
-            <h3 id="currentExerciseTitle" style="margin-top: 0;">Exercice</h3>
-            
-            <!-- Affichage de la séance précédente -->
-            <div id="lastSessionData" class="history-info" style="display: none;"></div>
-
-            <!-- Formulaire de la série en cours -->
-            <div class="flex-row">
-                <input type="number" id="weightInput" placeholder="Charge (kg)" step="0.5" inputmode="decimal">
-                <input type="number" id="repsInput" placeholder="Reps" inputmode="numeric">
-            </div>
-            <button class="btn-secondary" onclick="addSet()">Valider la série</button>
-            
-            <h4 style="margin-top: 20px; margin-bottom: 10px;">Séries d'aujourd'hui :</h4>
-            <ul id="todaySetsList"></ul>
-        </div>
-    </div>
-
-    <!-- VUE 2 : LES EXERCICES -->
+    <!-- VUE 1 : EXERCICES -->
     <div id="view-exercices" class="view">
+        <h2>🏋️ Mes Exercices</h2>
         <div class="card">
-            <h3 style="margin-top: 0;">Ajouter un exercice</h3>
-            <input type="text" id="exerciseName" placeholder="Ex: Développé couché">
-            <button onclick="addExercise()">Ajouter</button>
+            <input type="text" id="exerciseName" placeholder="Nouvel exercice (ex: Squat)">
+            <button onclick="addExercise()">Ajouter l'exercice</button>
         </div>
         <div class="card">
-            <h3 style="margin-top: 0;">Vos exercices enregistrés</h3>
             <ul id="exerciseList"></ul>
         </div>
     </div>
 
+    <!-- VUE 2 : MES SÉANCES (Routines) -->
+    <div id="view-routines" class="view active">
+        <h2>📅 Mes Séances</h2>
+        <div id="routinesListArea">
+            <button class="btn-secondary" onclick="showRoutineBuilder()">+ Créer une nouvelle séance</button>
+            <div id="routinesList" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- Constructeur de Séance (Caché par défaut) -->
+        <div id="routineBuilder" style="display: none;">
+            <div class="card">
+                <h3>Créer une séance</h3>
+                <input type="text" id="routineName" placeholder="Nom de la séance (ex: Push)">
+                
+                <h4 style="margin-top:15px; margin-bottom:5px;">1. Ajouter des exercices</h4>
+                <div class="flex-row">
+                    <select id="routineExerciseSelect"></select>
+                    <button class="btn-small" onclick="addExerciseToDraft()">Ajouter</button>
+                </div>
+
+                <h4 style="margin-top:15px; margin-bottom:5px;">2. Ordre et Séries</h4>
+                <ul id="draftExerciseList"></ul>
+
+                <div class="flex-row" style="margin-top: 20px;">
+                    <button class="btn-secondary" onclick="saveRoutine()">Enregistrer la séance</button>
+                    <button class="btn-danger" onclick="cancelRoutineBuilder()">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VUE 3 : ENTRAÎNEMENT ACTIF -->
+    <div id="view-workout" class="view">
+        <h2 id="activeWorkoutTitle">En cours...</h2>
+        <div id="activeWorkoutContent"></div>
+    </div>
+
+    <!-- BARRE DE NAVIGATION EN BAS -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="switchTab('exercices')">Exercices</div>
+        <div class="nav-item active" onclick="switchTab('routines')">Séances</div>
+        <div class="nav-item" onclick="switchTab('workout')" id="nav-workout" style="display:none;">En cours 🔴</div>
+    </div>
+
     <script>
-        // 1. CHARGEMENT DES DONNÉES LOCALES
+        // --- 1. DONNÉES LOCALES ---
         let exercises = JSON.parse(localStorage.getItem('exercises')) || [];
-        let workoutHistory = JSON.parse(localStorage.getItem('workoutHistory')) || [];
+        let routines = JSON.parse(localStorage.getItem('routines')) || [];
+        let history = JSON.parse(localStorage.getItem('history')) || [];
         
-        // Initialisation au démarrage
-        renderExercises();
-        populateSelect();
+        let draftRoutine = { name: "", items: [] }; // items: [{exId, exName, sets: ['8-12']}]
+        let currentWorkout = null; // { routineId, startTime, elements: [] }
 
-        // 2. GESTION DES ONGLETS
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            
-            if(tabName === 'seance') {
-                document.querySelectorAll('.tab')[0].classList.add('active');
-                document.getElementById('view-seance').classList.add('active');
-                populateSelect(); // Met à jour le menu déroulant
-            } else {
-                document.querySelectorAll('.tab')[1].classList.add('active');
-                document.getElementById('view-exercices').classList.add('active');
-            }
-        }
-
-        // 3. GESTION DES EXERCICES
-        function addExercise() {
-            const input = document.getElementById('exerciseName');
-            const name = input.value.trim();
-            if (name !== "") { 
-                exercises.push({ id: Date.now().toString(), name: name }); 
-                input.value = ""; 
-                localStorage.setItem('exercises', JSON.stringify(exercises));
-                renderExercises();
-            }
-        }
-
-        function deleteExercise(id) { 
-            exercises = exercises.filter(ex => ex.id !== id); 
-            localStorage.setItem('exercises', JSON.stringify(exercises));
+        // --- 2. INITIALISATION & NAVIGATION ---
+        function init() {
             renderExercises();
+            renderRoutines();
+            populateExerciseSelects();
         }
 
+        function switchTab(tabName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(v => v.classList.remove('active'));
+            
+            document.getElementById('view-' + tabName).classList.add('active');
+            
+            if(tabName === 'exercices') document.querySelectorAll('.nav-item')[0].classList.add('active');
+            if(tabName === 'routines') document.querySelectorAll('.nav-item')[1].classList.add('active');
+            if(tabName === 'workout') document.getElementById('nav-workout').classList.add('active');
+        }
+
+        // --- 3. GESTION DES EXERCICES ---
+        function addExercise() {
+            const name = document.getElementById('exerciseName').value.trim();
+            if (name) {
+                exercises.push({ id: Date.now().toString(), name: name });
+                document.getElementById('exerciseName').value = "";
+                saveData('exercises', exercises);
+                renderExercises();
+                populateExerciseSelects();
+            }
+        }
+        function deleteExercise(id) {
+            exercises = exercises.filter(ex => ex.id !== id);
+            saveData('exercises', exercises);
+            renderExercises();
+            populateExerciseSelects();
+        }
         function renderExercises() {
             const list = document.getElementById('exerciseList');
             list.innerHTML = "";
             exercises.forEach(ex => {
-                list.innerHTML += `<li><span>${ex.name}</span><button class="delete-btn" onclick="deleteExercise('${ex.id}')">X</button></li>`;
+                list.innerHTML += `
+                    <li class="flex-between">
+                        <span>${ex.name}</span>
+                        <button class="btn-danger btn-small" onclick="deleteExercise('${ex.id}')">X</button>
+                    </li>`;
             });
         }
-
-        // 4. GESTION DE LA SÉANCE & HISTORIQUE
-        function populateSelect() {
-            const select = document.getElementById('exerciseSelect');
-            const currentValue = select.value;
-            select.innerHTML = '<option value="">-- Sélectionnez --</option>';
+        function populateExerciseSelects() {
+            const select = document.getElementById('routineExerciseSelect');
+            select.innerHTML = '<option value="">-- Choisir un exercice --</option>';
             exercises.forEach(ex => {
-                select.innerHTML += `<option value="${ex.name}">${ex.name}</option>`;
+                select.innerHTML += `<option value="${ex.id}">${ex.name}</option>`;
             });
-            select.value = currentValue; 
         }
 
-        function updateHistoryView() {
-            const exerciseName = document.getElementById('exerciseSelect').value;
-            const workoutSection = document.getElementById('workoutSection');
-            
-            if (!exerciseName) {
-                workoutSection.style.display = 'none';
-                return;
-            }
-            
-            workoutSection.style.display = 'block';
-            document.getElementById('currentExerciseTitle').innerText = exerciseName;
-            
-            // Chercher les performances précédentes (avant aujourd'hui)
-            const today = new Date().toLocaleDateString('fr-FR');
-            const previousSets = workoutHistory.filter(set => set.exerciseName === exerciseName && set.dateString !== today);
-            const lastSessionData = document.getElementById('lastSessionData');
-            
-            if (previousSets.length > 0) {
-                // Trouver la date de la toute dernière séance pour cet exercice
-                const lastDate = previousSets[previousSets.length - 1].dateString;
-                const setsOfLastDate = previousSets.filter(set => set.dateString === lastDate);
-                
-                let text = `<strong>Dernière fois (${lastDate}) :</strong><br>`;
-                setsOfLastDate.forEach((s, index) => {
-                    text += `Série ${index + 1} : ${s.weight} kg × ${s.reps} reps<br>`;
-                });
-                lastSessionData.innerHTML = text;
-                lastSessionData.style.display = 'block';
-            } else {
-                lastSessionData.style.display = 'none';
-            }
-
-            renderTodaySets();
+        // --- 4. CRÉATION DE SÉANCES (Routines) ---
+        function showRoutineBuilder() {
+            document.getElementById('routinesListArea').style.display = 'none';
+            document.getElementById('routineBuilder').style.display = 'block';
+            draftRoutine = { name: "", items: [] };
+            document.getElementById('routineName').value = "";
+            renderDraftList();
         }
-
-        function addSet() {
-            const exerciseName = document.getElementById('exerciseSelect').value;
-            const weight = document.getElementById('weightInput').value;
-            const reps = document.getElementById('repsInput').value;
-            
-            if (exerciseName && weight && reps) {
-                const today = new Date().toLocaleDateString('fr-FR');
-                
-                const newSet = {
-                    id: Date.now().toString(),
-                    dateString: today,
-                    exerciseName: exerciseName,
-                    weight: parseFloat(weight),
-                    reps: parseInt(reps)
-                };
-                
-                workoutHistory.push(newSet);
-                localStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
-                
-                // On vide seulement les répétitions, on garde la charge affichée par confort
-                document.getElementById('repsInput').value = ""; 
-                
-                renderTodaySets();
-            }
+        function cancelRoutineBuilder() {
+            document.getElementById('routinesListArea').style.display = 'block';
+            document.getElementById('routineBuilder').style.display = 'none';
         }
-
-        function renderTodaySets() {
-            const exerciseName = document.getElementById('exerciseSelect').value;
-            const today = new Date().toLocaleDateString('fr-FR');
-            const todaySets = workoutHistory.filter(set => set.exerciseName === exerciseName && set.dateString === today);
+        function addExerciseToDraft() {
+            const select = document.getElementById('routineExerciseSelect');
+            const exId = select.value;
+            if (!exId) return;
+            const exName = exercises.find(e => e.id === exId).name;
             
-            const list = document.getElementById('todaySetsList');
+            // Par défaut, ajoute 1 série
+            draftRoutine.items.push({ exId: exId, exName: exName, sets: ["8-12"] });
+            renderDraftList();
+            select.value = "";
+        }
+        function addSetToDraft(exIndex) {
+            draftRoutine.items[exIndex].sets.push("8-12");
+            renderDraftList();
+        }
+        function removeSetFromDraft(exIndex, setIndex) {
+            draftRoutine.items[exIndex].sets.splice(setIndex, 1);
+            renderDraftList();
+        }
+        function updateDraftSetTarget(exIndex, setIndex, value) {
+            draftRoutine.items[exIndex].sets[setIndex] = value;
+        }
+        function removeExerciseFromDraft(exIndex) {
+            draftRoutine.items.splice(exIndex, 1);
+            renderDraftList();
+        }
+        function renderDraftList() {
+            const list = document.getElementById('draftExerciseList');
             list.innerHTML = "";
-            todaySets.forEach((set, index) => {
-                list.innerHTML += `<li>Série ${index + 1} : <strong>${set.weight} kg</strong> × ${set.reps} 
-                    <button class="delete-btn" onclick="deleteSet('${set.id}')">X</button></li>`;
+            draftRoutine.items.forEach((item, exIndex) => {
+                let setsHtml = "";
+                item.sets.forEach((target, setIndex) => {
+                    setsHtml += `
+                        <div class="flex-row" style="margin-top:5px;">
+                            <span style="font-size:12px;">Série ${setIndex + 1}:</span>
+                            <input type="text" style="padding:6px; margin:0; font-size:14px;" value="${target}" onchange="updateDraftSetTarget(${exIndex}, ${setIndex}, this.value)" placeholder="Reps cibles">
+                            <button class="btn-danger btn-small" onclick="removeSetFromDraft(${exIndex}, ${setIndex})">X</button>
+                        </div>
+                    `;
+                });
+
+                list.innerHTML += `
+                    <li>
+                        <div class="flex-between">
+                            <strong>${exIndex + 1}. ${item.exName}</strong>
+                            <button class="btn-danger btn-small" onclick="removeExerciseFromDraft(${exIndex})">Retirer</button>
+                        </div>
+                        <div style="margin-top:10px;">${setsHtml}</div>
+                        <button class="btn-small btn-secondary" style="margin-top:10px; width:100%;" onclick="addSetToDraft(${exIndex})">+ Ajouter une série</button>
+                    </li>
+                `;
+            });
+        }
+        function saveRoutine() {
+            const name = document.getElementById('routineName').value.trim();
+            if (!name || draftRoutine.items.length === 0) return alert("Donnez un nom et ajoutez des exercices.");
+            
+            const newRoutine = { id: Date.now().toString(), name: name, items: draftRoutine.items };
+            routines.push(newRoutine);
+            saveData('routines', routines);
+            
+            cancelRoutineBuilder();
+            renderRoutines();
+        }
+        function deleteRoutine(id) {
+            routines = routines.filter(r => r.id !== id);
+            saveData('routines', routines);
+            renderRoutines();
+        }
+        function renderRoutines() {
+            const list = document.getElementById('routinesList');
+            list.innerHTML = "";
+            routines.forEach(r => {
+                list.innerHTML += `
+                    <div class="card">
+                        <div class="flex-between" style="margin-bottom:10px;">
+                            <h3>${r.name}</h3>
+                            <button class="btn-danger btn-small" onclick="deleteRoutine('${r.id}')">Supprimer</button>
+                        </div>
+                        <div style="font-size:13px; color:#8e8e93; margin-bottom:15px;">
+                            ${r.items.map(i => i.exName).join(' ➔ ')}
+                        </div>
+                        <button onclick="startWorkout('${r.id}')">▶ Démarrer la séance</button>
+                    </div>
+                `;
             });
         }
 
-        function deleteSet(id) {
-            workoutHistory = workoutHistory.filter(set => set.id !== id);
-            localStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
-            renderTodaySets();
+        // --- 5. ENTRAÎNEMENT ACTIF & HISTORIQUE ---
+        function startWorkout(routineId) {
+            const routine = routines.find(r => r.id === routineId);
+            currentWorkout = { routineId: routine.id, routineName: routine.name, date: new Date().toISOString(), items: JSON.parse(JSON.stringify(routine.items)) };
+            
+            document.getElementById('nav-workout').style.display = 'block';
+            document.getElementById('activeWorkoutTitle').innerText = "🔴 " + routine.name;
+            
+            renderActiveWorkout();
+            switchTab('workout');
         }
+
+        function getLastSessionData(routineId) {
+            // Trouve la dernière session enregistrée pour cette routine
+            const pastSessions = history.filter(h => h.routineId === routineId);
+            if (pastSessions.length === 0) return null;
+            return pastSessions[pastSessions.length - 1]; // La plus récente est à la fin
+        }
+
+        function renderActiveWorkout() {
+            const container = document.getElementById('activeWorkoutContent');
+            const lastSession = getLastSessionData(currentWorkout.routineId);
+            container.innerHTML = "";
+
+            currentWorkout.items.forEach((item, exIndex) => {
+                let html = `<div class="card"><h3>${exIndex + 1}. ${item.exName}</h3>`;
+                
+                // Récupération des perfs du dernier entraînement pour cet exercice spécifique
+                let lastItemData = null;
+                if (lastSession && lastSession.items[exIndex] && lastSession.items[exIndex].exId === item.exId) {
+                    lastItemData = lastSession.items[exIndex];
+                }
+
+                item.sets.forEach((targetReps, setIndex) => {
+                    // Chercher la perf de la série précédente
+                    let lastPerfText = "Aucun historique";
+                    if (lastItemData && lastItemData.loggedSets && lastItemData.loggedSets[setIndex]) {
+                        const l = lastItemData.loggedSets[setIndex];
+                        lastPerfText = `Dernière fois : ${l.weight} kg × ${l.reps} reps`;
+                    }
+
+                    html += `
+                        <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+                            <div class="set-info"><span class="badge">Série ${setIndex + 1}</span> Cible : ${targetReps}</div>
+                            <div class="last-perf">${lastPerfText}</div>
+                            <div class="set-row">
+                                <input type="number" id="w_${exIndex}_${setIndex}" placeholder="Poids (kg)" inputmode="decimal">
+                                <input type="number" id="r_${exIndex}_${setIndex}" placeholder="Reps" inputmode="numeric">
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+                container.innerHTML += html;
+            });
+
+            container.innerHTML += `<button class="btn-secondary" style="margin-top: 20px;" onclick="finishWorkout()">✅ Terminer et Enregistrer</button>`;
+        }
+
+        function finishWorkout() {
+            // Collecter toutes les données saisies
+            currentWorkout.items.forEach((item, exIndex) => {
+                item.loggedSets = [];
+                item.sets.forEach((target, setIndex) => {
+                    const weight = document.getElementById(`w_${exIndex}_${setIndex}`).value;
+                    const reps = document.getElementById(`r_${exIndex}_${setIndex}`).value;
+                    item.loggedSets.push({ weight: weight || 0, reps: reps || 0 });
+                });
+            });
+
+            history.push(currentWorkout);
+            saveData('history', history);
+            
+            alert("Séance enregistrée avec succès !");
+            
+            currentWorkout = null;
+            document.getElementById('nav-workout').style.display = 'none';
+            switchTab('routines');
+        }
+
+        // --- OUTILS ---
+        function saveData(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        // Lancement initial
+        init();
     </script>
 </body>
 </html>
