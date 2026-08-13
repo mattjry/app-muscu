@@ -6,43 +6,220 @@
     <title>Mon Suivi Muscu</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f2f2f7; margin: 0; padding: 20px; color: #1c1c1e; }
-        h1 { font-size: 24px; margin-bottom: 20px; }
+        h1 { font-size: 24px; margin-bottom: 20px; text-align: center; }
+        
+        /* Navigation par onglets */
+        .tabs { display: flex; margin-bottom: 20px; background: #e5e5ea; border-radius: 8px; padding: 4px; }
+        .tab { flex: 1; text-align: center; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #8e8e93; font-size: 14px; }
+        .tab.active { background: white; color: #000; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .view { display: none; }
+        .view.active { display: block; }
+        
+        /* Cartes et Formulaires */
         .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        input, button { width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 12px; border-radius: 8px; border: 1px solid #c7c7cc; font-size: 16px; box-sizing: border-box; }
+        input, select, button { width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 12px; border-radius: 8px; border: 1px solid #c7c7cc; font-size: 16px; box-sizing: border-box; }
         button { background-color: #007aff; color: white; border: none; font-weight: bold; }
-        ul { padding-left: 0; list-style: none; }
-        li { background: #ffffff; padding: 12px 15px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e5e5ea; }
+        .btn-secondary { background-color: #34c759; }
+        
+        /* Listes */
+        ul { padding-left: 0; list-style: none; margin-top: 0; }
+        li { background: #ffffff; padding: 12px 15px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e5e5ea; font-size: 15px;}
         .delete-btn { background-color: #ff3b30; color: white; border: none; padding: 6px 12px; border-radius: 6px; width: auto; margin: 0; font-size: 14px; }
+        
+        /* Mise en page spécifique */
+        .flex-row { display: flex; gap: 10px; }
+        .history-info { background: #e5f1ff; padding: 12px; border-radius: 8px; font-size: 14px; color: #004080; margin-bottom: 15px; line-height: 1.4;}
     </style>
 </head>
 <body>
-    <h1>🏋️ Mes Exercices</h1>
-    <div class="card">
-        <h3>Ajouter un exercice</h3>
-        <input type="text" id="exerciseName" placeholder="Ex: Développé couché">
-        <button onclick="addExercise()">Ajouter l'exercice</button>
+    <h1>🏋️ Mon Suivi</h1>
+    
+    <!-- Menu de navigation -->
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('seance')">Ma Séance</div>
+        <div class="tab" onclick="switchTab('exercices')">Gérer les exercices</div>
     </div>
-    <div class="card">
-        <h3>Liste de vos exercices</h3>
-        <ul id="exerciseList"></ul>
+
+    <!-- VUE 1 : LA SÉANCE -->
+    <div id="view-seance" class="view active">
+        <div class="card">
+            <h3>1. Choisir l'exercice</h3>
+            <select id="exerciseSelect" onchange="updateHistoryView()">
+                <option value="">-- Sélectionnez --</option>
+            </select>
+        </div>
+
+        <div class="card" id="workoutSection" style="display: none;">
+            <h3 id="currentExerciseTitle" style="margin-top: 0;">Exercice</h3>
+            
+            <!-- Affichage de la séance précédente -->
+            <div id="lastSessionData" class="history-info" style="display: none;"></div>
+
+            <!-- Formulaire de la série en cours -->
+            <div class="flex-row">
+                <input type="number" id="weightInput" placeholder="Charge (kg)" step="0.5" inputmode="decimal">
+                <input type="number" id="repsInput" placeholder="Reps" inputmode="numeric">
+            </div>
+            <button class="btn-secondary" onclick="addSet()">Valider la série</button>
+            
+            <h4 style="margin-top: 20px; margin-bottom: 10px;">Séries d'aujourd'hui :</h4>
+            <ul id="todaySetsList"></ul>
+        </div>
     </div>
+
+    <!-- VUE 2 : LES EXERCICES -->
+    <div id="view-exercices" class="view">
+        <div class="card">
+            <h3 style="margin-top: 0;">Ajouter un exercice</h3>
+            <input type="text" id="exerciseName" placeholder="Ex: Développé couché">
+            <button onclick="addExercise()">Ajouter</button>
+        </div>
+        <div class="card">
+            <h3 style="margin-top: 0;">Vos exercices enregistrés</h3>
+            <ul id="exerciseList"></ul>
+        </div>
+    </div>
+
     <script>
+        // 1. CHARGEMENT DES DONNÉES LOCALES
         let exercises = JSON.parse(localStorage.getItem('exercises')) || [];
-        function saveAndRender() { localStorage.setItem('exercises', JSON.stringify(exercises)); renderExercises(); }
+        let workoutHistory = JSON.parse(localStorage.getItem('workoutHistory')) || [];
+        
+        // Initialisation au démarrage
+        renderExercises();
+        populateSelect();
+
+        // 2. GESTION DES ONGLETS
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            
+            if(tabName === 'seance') {
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.getElementById('view-seance').classList.add('active');
+                populateSelect(); // Met à jour le menu déroulant
+            } else {
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('view-exercices').classList.add('active');
+            }
+        }
+
+        // 3. GESTION DES EXERCICES
         function addExercise() {
             const input = document.getElementById('exerciseName');
             const name = input.value.trim();
-            if (name !== "") { exercises.push({ id: Date.now(), name: name }); input.value = ""; saveAndRender(); }
+            if (name !== "") { 
+                exercises.push({ id: Date.now().toString(), name: name }); 
+                input.value = ""; 
+                localStorage.setItem('exercises', JSON.stringify(exercises));
+                renderExercises();
+            }
         }
-        function deleteExercise(id) { exercises = exercises.filter(ex => ex.id !== id); saveAndRender(); }
+
+        function deleteExercise(id) { 
+            exercises = exercises.filter(ex => ex.id !== id); 
+            localStorage.setItem('exercises', JSON.stringify(exercises));
+            renderExercises();
+        }
+
         function renderExercises() {
             const list = document.getElementById('exerciseList');
             list.innerHTML = "";
             exercises.forEach(ex => {
-                list.innerHTML += `<li><span>${ex.name}</span><button class="delete-btn" onclick="deleteExercise(${ex.id})">Supprimer</button></li>`;
+                list.innerHTML += `<li><span>${ex.name}</span><button class="delete-btn" onclick="deleteExercise('${ex.id}')">X</button></li>`;
             });
         }
-        renderExercises();
+
+        // 4. GESTION DE LA SÉANCE & HISTORIQUE
+        function populateSelect() {
+            const select = document.getElementById('exerciseSelect');
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">-- Sélectionnez --</option>';
+            exercises.forEach(ex => {
+                select.innerHTML += `<option value="${ex.name}">${ex.name}</option>`;
+            });
+            select.value = currentValue; 
+        }
+
+        function updateHistoryView() {
+            const exerciseName = document.getElementById('exerciseSelect').value;
+            const workoutSection = document.getElementById('workoutSection');
+            
+            if (!exerciseName) {
+                workoutSection.style.display = 'none';
+                return;
+            }
+            
+            workoutSection.style.display = 'block';
+            document.getElementById('currentExerciseTitle').innerText = exerciseName;
+            
+            // Chercher les performances précédentes (avant aujourd'hui)
+            const today = new Date().toLocaleDateString('fr-FR');
+            const previousSets = workoutHistory.filter(set => set.exerciseName === exerciseName && set.dateString !== today);
+            const lastSessionData = document.getElementById('lastSessionData');
+            
+            if (previousSets.length > 0) {
+                // Trouver la date de la toute dernière séance pour cet exercice
+                const lastDate = previousSets[previousSets.length - 1].dateString;
+                const setsOfLastDate = previousSets.filter(set => set.dateString === lastDate);
+                
+                let text = `<strong>Dernière fois (${lastDate}) :</strong><br>`;
+                setsOfLastDate.forEach((s, index) => {
+                    text += `Série ${index + 1} : ${s.weight} kg × ${s.reps} reps<br>`;
+                });
+                lastSessionData.innerHTML = text;
+                lastSessionData.style.display = 'block';
+            } else {
+                lastSessionData.style.display = 'none';
+            }
+
+            renderTodaySets();
+        }
+
+        function addSet() {
+            const exerciseName = document.getElementById('exerciseSelect').value;
+            const weight = document.getElementById('weightInput').value;
+            const reps = document.getElementById('repsInput').value;
+            
+            if (exerciseName && weight && reps) {
+                const today = new Date().toLocaleDateString('fr-FR');
+                
+                const newSet = {
+                    id: Date.now().toString(),
+                    dateString: today,
+                    exerciseName: exerciseName,
+                    weight: parseFloat(weight),
+                    reps: parseInt(reps)
+                };
+                
+                workoutHistory.push(newSet);
+                localStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
+                
+                // On vide seulement les répétitions, on garde la charge affichée par confort
+                document.getElementById('repsInput').value = ""; 
+                
+                renderTodaySets();
+            }
+        }
+
+        function renderTodaySets() {
+            const exerciseName = document.getElementById('exerciseSelect').value;
+            const today = new Date().toLocaleDateString('fr-FR');
+            const todaySets = workoutHistory.filter(set => set.exerciseName === exerciseName && set.dateString === today);
+            
+            const list = document.getElementById('todaySetsList');
+            list.innerHTML = "";
+            todaySets.forEach((set, index) => {
+                list.innerHTML += `<li>Série ${index + 1} : <strong>${set.weight} kg</strong> × ${set.reps} 
+                    <button class="delete-btn" onclick="deleteSet('${set.id}')">X</button></li>`;
+            });
+        }
+
+        function deleteSet(id) {
+            workoutHistory = workoutHistory.filter(set => set.id !== id);
+            localStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
+            renderTodaySets();
+        }
     </script>
 </body>
 </html>
