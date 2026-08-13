@@ -18,20 +18,29 @@
         
         /* Composants UI */
         .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        input, select, button { width: 100%; padding: 12px; margin-top: 5px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #c7c7cc; font-size: 16px; box-sizing: border-box; }
+        input, select, textarea, button { width: 100%; padding: 12px; margin-top: 5px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #c7c7cc; font-size: 16px; box-sizing: border-box; font-family: inherit; }
         button { background-color: #007aff; color: white; border: none; font-weight: bold; cursor: pointer;}
         .btn-secondary { background-color: #34c759; }
         .btn-danger { background-color: #ff3b30; }
         .btn-warning { background-color: #ff9500; }
         .btn-small { padding: 8px; font-size: 14px; width: auto; margin: 0; }
         
-        /* Listes & Catégories */
+        /* Catégories et Listes */
         ul { padding-left: 0; list-style: none; margin: 0; }
-        li { background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e5e5ea; }
-        .category-title { font-size: 16px; font-weight: bold; margin-top: 15px; margin-bottom: 5px; color: #007aff; border-bottom: 2px solid #e5e5ea; padding-bottom: 3px;}
+        li { background: #f9f9f9; padding: 12px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e5e5ea; cursor: pointer; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
         .flex-row { display: flex; gap: 10px; align-items: center; }
         
+        /* Accordéon des Catégories */
+        .category-header { display: flex; align-items: center; font-size: 16px; font-weight: bold; color: #007aff; margin-top: 15px; margin-bottom: 5px; cursor: pointer; padding: 5px 0; border-bottom: 2px solid #e5e5ea; }
+        .chevron { margin-right: 10px; font-size: 12px; transition: transform 0.2s; display: inline-block;}
+        .chevron.closed { transform: rotate(-90deg); } /* Flèche vers la droite */
+        .category-content { display: block; }
+        .category-content.closed { display: none; }
+        
+        /* Flèche de navigation sur les exos */
+        .nav-arrow { color: #c7c7cc; font-weight: bold; }
+
         /* Séance Active */
         .set-row { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; }
         .set-row input { margin: 0; text-align: center; }
@@ -39,11 +48,12 @@
         .last-perf { font-size: 12px; color: #8e8e93; margin-bottom: 10px; font-style: italic; }
         .badge { background: #007aff; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-right: 5px;}
 
-        /* Modal Graphique */
-        #chartModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; }
-        .svg-container { width: 100%; height: 200px; margin-top: 15px; border-bottom: 1px solid #ccc; border-left: 1px solid #ccc; position: relative;}
-        .chart-tooltip { position: absolute; background: #333; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 12px; display: none; pointer-events: none;}
+        /* Modal Plein Écran (Détails Exercice) */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f2f2f7; z-index: 200; overflow-y: auto; padding-bottom: 30px;}
+        .modal-header { background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 201;}
+        .modal-body { padding: 15px; }
+        
+        .svg-container { width: 100%; height: 200px; margin-top: 5px; border-bottom: 1px solid #ccc; border-left: 1px solid #ccc; position: relative;}
     </style>
 </head>
 <body>
@@ -62,10 +72,50 @@
                 <option value="Abdos">Abdos</option>
                 <option value="Autre">Autre</option>
             </select>
-            <button onclick="addExercise()">Ajouter l'exercice</button>
+            <button onclick="addExercise()">Créer l'exercice</button>
         </div>
-        <div class="card" id="exerciseListArea">
+        <div id="exerciseListArea" style="margin-bottom: 20px;">
             <!-- Rendu dynamique des exercices groupés -->
+        </div>
+    </div>
+
+    <!-- PAGE DÉTAILS DE L'EXERCICE (Modal) -->
+    <div id="exerciseDetailModal" class="modal-overlay">
+        <div class="modal-header">
+            <button class="btn-small" style="background: transparent; color: #007aff; padding: 0;" onclick="closeExerciseDetail()">◀ Retour</button>
+            <h3 style="margin: 0; font-size: 16px;">Détails</h3>
+            <button class="btn-small btn-secondary" onclick="saveExerciseDetail()">Enregistrer</button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="card">
+                <label style="font-size: 14px; font-weight: bold; color: #8e8e93;">Nom de l'exercice</label>
+                <input type="text" id="detailExName">
+                
+                <label style="font-size: 14px; font-weight: bold; color: #8e8e93;">Catégorie</label>
+                <select id="detailExCategory">
+                    <option value="Pectoraux">Pectoraux</option>
+                    <option value="Dos">Dos</option>
+                    <option value="Jambes">Jambes</option>
+                    <option value="Épaules">Épaules</option>
+                    <option value="Bras">Bras</option>
+                    <option value="Abdos">Abdos</option>
+                    <option value="Autre">Autre</option>
+                </select>
+
+                <label style="font-size: 14px; font-weight: bold; color: #8e8e93; display: block; margin-top: 10px;">Notes / Réglages</label>
+                <textarea id="detailExNotes" rows="3" placeholder="Ex: Siège sur 3, bien serrer les omoplates..."></textarea>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 5px;">📈 Progression</h3>
+                <p style="font-size: 12px; color: #8e8e93; margin-top: 0;">Charge maximale (kg) par séance</p>
+                <div class="svg-container" id="svgContainer">
+                    <svg id="chartSvg" width="100%" height="100%"></svg>
+                </div>
+            </div>
+
+            <button class="btn-danger" style="margin-top: 20px;" onclick="deleteCurrentExercise()">Supprimer cet exercice</button>
         </div>
     </div>
 
@@ -106,19 +156,6 @@
         <div id="activeWorkoutContent"></div>
     </div>
 
-    <!-- MODAL GRAPHIQUE (PROGRESSION) -->
-    <div id="chartModal">
-        <div class="modal-content">
-            <h3 id="chartTitle" style="margin-bottom: 5px;">Progression</h3>
-            <p style="font-size: 12px; color: #8e8e93; margin-top: 0;">Charge maximale (kg) par séance</p>
-            <div class="svg-container" id="svgContainer">
-                <svg id="chartSvg" width="100%" height="100%"></svg>
-                <div class="chart-tooltip" id="chartTooltip"></div>
-            </div>
-            <button class="btn-danger" style="margin-top: 20px;" onclick="closeChart()">Fermer</button>
-        </div>
-    </div>
-
     <!-- BARRE DE NAVIGATION EN BAS -->
     <div class="bottom-nav">
         <div class="nav-item" onclick="switchTab('exercices')">Exercices</div>
@@ -133,8 +170,9 @@
         let history = JSON.parse(localStorage.getItem('history')) || [];
         
         let draftRoutine = { name: "", items: [] }; 
-        let editingRoutineId = null; // Permet de savoir si on modifie une séance
+        let editingRoutineId = null; 
         let currentWorkout = null; 
+        let currentDetailExId = null; // ID de l'exercice ouvert en détail
 
         function init() {
             renderExercises();
@@ -158,7 +196,7 @@
             const category = document.getElementById('exerciseCategory').value;
             
             if (name) {
-                exercises.push({ id: Date.now().toString(), name: name, category: category });
+                exercises.push({ id: Date.now().toString(), name: name, category: category, notes: "" });
                 document.getElementById('exerciseName').value = "";
                 saveData('exercises', exercises);
                 renderExercises();
@@ -166,39 +204,51 @@
             }
         }
 
-        function deleteExercise(id) {
-            exercises = exercises.filter(ex => ex.id !== id);
-            saveData('exercises', exercises);
-            renderExercises();
-            populateExerciseSelects();
+        function toggleCategory(catId) {
+            const content = document.getElementById(`cat-content-${catId}`);
+            const chevron = document.getElementById(`chev-${catId}`);
+            
+            if (content.classList.contains('closed')) {
+                content.classList.remove('closed');
+                chevron.classList.remove('closed');
+            } else {
+                content.classList.add('closed');
+                chevron.classList.add('closed');
+            }
         }
 
         function renderExercises() {
             const area = document.getElementById('exerciseListArea');
             area.innerHTML = "";
             
-            // Grouper par catégorie
             const grouped = exercises.reduce((acc, ex) => {
-                const cat = ex.category || "Autre"; // Fallback pour les anciens exos
+                const cat = ex.category || "Autre"; 
                 if (!acc[cat]) acc[cat] = [];
                 acc[cat].push(ex);
                 return acc;
             }, {});
 
+            let catIndex = 0;
             for (const [cat, list] of Object.entries(grouped)) {
-                let html = `<div class="category-title">${cat}</div><ul>`;
+                // Par défaut, on laisse les catégories ouvertes
+                html = `
+                    <div class="category-header" onclick="toggleCategory('${catIndex}')">
+                        <span class="chevron" id="chev-${catIndex}">▼</span> ${cat}
+                    </div>
+                    <ul class="category-content" id="cat-content-${catIndex}">
+                `;
+                
                 list.forEach(ex => {
                     html += `
-                        <li class="flex-between">
+                        <li class="flex-between" onclick="openExerciseDetail('${ex.id}')">
                             <span>${ex.name}</span>
-                            <div>
-                                <button class="btn-secondary btn-small" onclick="showChart('${ex.id}', '${ex.name.replace(/'/g, "\\'")}')">📈</button>
-                                <button class="btn-danger btn-small" onclick="deleteExercise('${ex.id}')">X</button>
-                            </div>
+                            <span class="nav-arrow">></span>
                         </li>`;
                 });
+                
                 html += `</ul>`;
                 area.innerHTML += html;
+                catIndex++;
             }
         }
 
@@ -210,22 +260,60 @@
             });
         }
 
-        // --- 3. GRAPHIQUE DE PROGRESSION (SVG 100% Natif) ---
-        function showChart(exId, exName) {
-            document.getElementById('chartTitle').innerText = exName;
-            document.getElementById('chartModal').style.display = 'flex';
+        // --- 3. PAGE DÉTAILS EXERCICE (Modal) ---
+        function openExerciseDetail(id) {
+            currentDetailExId = id;
+            const ex = exercises.find(e => e.id === id);
             
-            const svg = document.getElementById('chartSvg');
-            svg.innerHTML = ""; // Vider le graphique
+            document.getElementById('detailExName').value = ex.name;
+            document.getElementById('detailExCategory').value = ex.category || "Autre";
+            document.getElementById('detailExNotes').value = ex.notes || "";
+            
+            document.getElementById('exerciseDetailModal').style.display = 'block';
+            
+            // On laisse un tout petit délai pour que le modal s'affiche avant de dessiner le SVG
+            setTimeout(() => {
+                renderChart(id);
+            }, 10);
+        }
 
-            // Extraire les charges max pour chaque séance de cet exercice
+        function saveExerciseDetail() {
+            const ex = exercises.find(e => e.id === currentDetailExId);
+            ex.name = document.getElementById('detailExName').value.trim();
+            ex.category = document.getElementById('detailExCategory').value;
+            ex.notes = document.getElementById('detailExNotes').value.trim();
+            
+            saveData('exercises', exercises);
+            renderExercises();
+            populateExerciseSelects(); 
+            closeExerciseDetail();
+        }
+
+        function closeExerciseDetail() {
+            document.getElementById('exerciseDetailModal').style.display = 'none';
+            currentDetailExId = null;
+        }
+
+        function deleteCurrentExercise() {
+            if(confirm("Es-tu sûr de vouloir supprimer cet exercice ?")) {
+                exercises = exercises.filter(ex => ex.id !== currentDetailExId);
+                saveData('exercises', exercises);
+                renderExercises();
+                populateExerciseSelects();
+                closeExerciseDetail();
+            }
+        }
+
+        function renderChart(exId) {
+            const svg = document.getElementById('chartSvg');
+            svg.innerHTML = ""; 
+
             let dataPoints = [];
             history.forEach(session => {
                 const exItem = session.items.find(i => i.exId === exId);
                 if (exItem && exItem.loggedSets) {
                     let maxWeight = Math.max(...exItem.loggedSets.map(s => parseFloat(s.weight) || 0));
                     if (maxWeight > 0) {
-                        // Formater la date courte (JJ/MM)
                         let d = new Date(session.date);
                         let dateStr = `${d.getDate()}/${d.getMonth()+1}`;
                         dataPoints.push({ date: dateStr, weight: maxWeight });
@@ -238,7 +326,6 @@
                 return;
             }
 
-            // Calcul des dimensions
             const width = document.getElementById('svgContainer').clientWidth;
             const height = 200;
             const padX = 20; 
@@ -246,9 +333,8 @@
 
             const maxW = Math.max(...dataPoints.map(d => d.weight));
             const minW = Math.min(...dataPoints.map(d => d.weight));
-            const rangeY = (maxW - minW) || 10; // Eviter div par zero
+            const rangeY = (maxW - minW) || 10; 
 
-            // Génération des points SVG
             let pointsSvg = "";
             let circlesSvg = "";
             let labelsSvg = "";
@@ -258,7 +344,6 @@
                 let cy = height - padY - ((pt.weight - minW) / rangeY) * (height - 2*padY);
                 
                 pointsSvg += `${cx},${cy} `;
-                
                 circlesSvg += `<circle cx="${cx}" cy="${cy}" r="4" fill="#007aff" />`;
                 labelsSvg += `<text x="${cx}" y="${height - 2}" font-size="10" text-anchor="middle" fill="#8e8e93">${pt.date}</text>`;
                 labelsSvg += `<text x="${cx}" y="${cy - 10}" font-size="12" font-weight="bold" text-anchor="middle" fill="#1c1c1e">${pt.weight}</text>`;
@@ -271,24 +356,18 @@
             `;
         }
 
-        function closeChart() {
-            document.getElementById('chartModal').style.display = 'none';
-        }
-
         // --- 4. CRÉATION ET ÉDITION DE SÉANCES ---
         function showRoutineBuilder(id = null) {
             document.getElementById('routinesListArea').style.display = 'none';
             document.getElementById('routineBuilder').style.display = 'block';
             
             if (id) {
-                // Mode Édition
                 editingRoutineId = id;
                 document.getElementById('builderTitle').innerText = "Modifier la séance";
                 const routine = routines.find(r => r.id === id);
-                draftRoutine = JSON.parse(JSON.stringify(routine)); // Copie
+                draftRoutine = JSON.parse(JSON.stringify(routine)); 
                 document.getElementById('routineName').value = draftRoutine.name;
             } else {
-                // Mode Création
                 editingRoutineId = null;
                 document.getElementById('builderTitle').innerText = "Créer une séance";
                 draftRoutine = { name: "", items: [] };
@@ -367,11 +446,9 @@
             if (!name || draftRoutine.items.length === 0) return alert("Donnez un nom et ajoutez des exercices.");
             
             if (editingRoutineId) {
-                // Mise à jour
                 const index = routines.findIndex(r => r.id === editingRoutineId);
                 routines[index] = { id: editingRoutineId, name: name, items: draftRoutine.items };
             } else {
-                // Création
                 routines.push({ id: Date.now().toString(), name: name, items: draftRoutine.items });
             }
             
@@ -441,6 +518,12 @@
                     lastItemData = lastSession.items[exIndex];
                 }
 
+                // Afficher les notes de l'exercice pendant la séance
+                const baseEx = exercises.find(e => e.id === item.exId);
+                if(baseEx && baseEx.notes) {
+                    html += `<div style="font-size:12px; color:#ff9500; margin-bottom:10px; padding:8px; background:#fff5e5; border-radius:6px;">📝 ${baseEx.notes}</div>`;
+                }
+
                 item.sets.forEach((targetReps, setIndex) => {
                     let lastPerfText = "Aucun historique";
                     if (lastItemData && lastItemData.loggedSets && lastItemData.loggedSets[setIndex]) {
@@ -480,7 +563,7 @@
             history.push(currentWorkout);
             saveData('history', history);
             
-            alert("Séance enregistrée avec succès ! Les graphiques de progression ont été mis à jour.");
+            alert("Séance enregistrée avec succès !");
             
             currentWorkout = null;
             document.getElementById('nav-workout').style.display = 'none';
